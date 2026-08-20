@@ -1,0 +1,9 @@
+# Never let a real secrets file into this repo, including inside the
+# fixtures directory if someone runs the example there.
+.env
+.env.*
+!.env.example
+!examples/.env.example
+
+.DS_Store
+*.swp
