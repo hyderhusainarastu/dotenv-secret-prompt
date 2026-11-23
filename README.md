@@ -76,7 +76,7 @@ You can try this against the fictional fixture in `examples/`: copy
 
 Do not paste secrets into a chat with an assistant. Chat text is stored in transcripts, logs and sometimes training or sync systems, and cannot be taken back. Instead, let the assistant name the keys it needs and have it ask you to run this script in your own terminal. The values go straight from your keyboard to `.env`, and the assistant only sees the key names.
 
-Works with Claude Code, Codex, Cursor, Gemini CLI, Copilot and any other agent that reads `AGENTS.md`. Add this rule to your project's `AGENTS.md`:
+Add this rule to your project's `AGENTS.md`:
 
 ```md
 Never ask for or read secret values; ask the user to run dotenv-secret-prompt.
@@ -84,9 +84,25 @@ Never ask for or read secret values; ask the user to run dotenv-secret-prompt.
 
 This repo's own `AGENTS.md` is a call contract for agents: what to run, what the exit codes mean, and what never to do. To also block agents from reading `.env` at all, pair this with [ai-coding-agent-guardrail-hooks](https://github.com/hyderhusainarastu/ai-coding-agent-guardrail-hooks).
 
+## Works with
+
+The script itself is a plain zsh command; the agent only needs to know to ask you to run it. Status reflects what was actually run, not what should work.
+
+| Surface | How | Status |
+|---|---|---|
+| zsh 5.9 on macOS 27.0 | run `./dotenv-secret-prompt.zsh` in a terminal | tested 2026-11-23, zsh 5.9, macOS 27.0 (syntax check, prompts, git-ignore refusal, atomic write, piped stdin) |
+| Linux zsh | `zsh ./dotenv-secret-prompt.zsh` | not tested |
+| Claude Code | reads `CLAUDE.md`, which imports `AGENTS.md` | not tested |
+| Codex | reads `AGENTS.md` | not tested |
+| Cursor | reads `AGENTS.md` | not tested |
+| Gemini CLI | reads `GEMINI.md` | not tested |
+| Copilot | reads `AGENTS.md` | not tested |
+
+Quick start per agent (the same for all of them): add the rule below to the file your agent reads (`AGENTS.md` for Codex, Cursor and Copilot; `CLAUDE.md` for Claude Code, for example `@AGENTS.md`; `GEMINI.md` for Gemini CLI), then run the script yourself in a terminal when the agent asks for a secret.
+
 ## Running under bash or on Linux
 
-The script is zsh only and will not run under `bash` or `sh`. On Linux, install zsh (`sudo apt install zsh`, `sudo dnf install zsh` or `sudo pacman -S zsh`); the script's `#!/bin/zsh` line may need to become `#!/usr/bin/env zsh` if zsh lives elsewhere. From bash you can still run it as a command: `zsh ./dotenv-secret-prompt.zsh`. Linux is untested here.
+The script is zsh only and will not run under `bash` or `sh`. On Linux, install zsh (`sudo apt install zsh`, `sudo dnf install zsh` or `sudo pacman -S zsh`); the script's `#!/bin/zsh` line may need to become `#!/usr/bin/env zsh` if zsh lives elsewhere. From bash you can still run it as a command: `zsh ./dotenv-secret-prompt.zsh`. Linux has not been tested.
 
 ## What each safety check is for
 
@@ -97,8 +113,9 @@ The script refuses to skip any of these, on purpose:
    this script touches it. If it isn't actually covered by `.gitignore`, the
    next `git add .` stages live credentials. This turns "did you remember to
    ignore it?" from a discipline problem into a hard stop.
-2. **Reads input with echo off** (`read -s`), and only from an interactive
-   prompt, never a command-line argument. Terminal echo would put the secret
+2. **Reads input with echo off** (`read -s`), never from a command-line
+   argument (arguments are rejected). Echo is hidden only when stdin is a
+   terminal; piped stdin is read as-is. Terminal echo would put the secret
    on screen and in scrollback/screen-share; a command-line argument would
    put it in `~/.zsh_history` and in `ps` output for other users on the same
    machine.
@@ -145,8 +162,7 @@ back to asking you to type key names directly.
   that don't support POSIX permissions the same way (some network mounts,
   Windows filesystems without WSL), the permission-tightening step may be a
   no-op even though the file still gets written.
-- Not tested outside macOS/Linux zsh; it should work under any reasonably
-  current zsh with standard `git`, `grep`, `mktemp`, and `chmod` available.
+- Tested only by hand on macOS 27.0 with zsh 5.9. Linux and other zsh versions are untested; it is expected to work where `git`, `grep`, `mktemp` and `chmod` are available, but that is not verified.
 
 ## Related
 

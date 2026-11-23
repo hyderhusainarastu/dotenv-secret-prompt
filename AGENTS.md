@@ -7,7 +7,7 @@
 Rules for an agent:
 - Never ask for, read, print or paste secret values. Do not open `.env`.
 - When a project needs a secret, ask the user to run: `./dotenv-secret-prompt.zsh` (or `-f path/.env`) in their own terminal. Wait for them to confirm.
-- Do not run the script yourself in a non-interactive shell. It needs a TTY and will not accept values from arguments or pipes.
+- Do not run the script yourself in a non-interactive shell. Hidden echo applies only on a terminal; piped stdin is read as-is, and values passed as arguments are rejected.
 - Key names come from `.env.example` next to the target. Add new keys there (empty values only), then ask the user to re-run the script.
 - Blank answers keep existing values, so re-running is safe.
 - Do not weaken the git-ignore check, and never commit `.env`.
