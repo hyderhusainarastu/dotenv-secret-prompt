@@ -72,6 +72,22 @@ You can try this against the fictional fixture in `examples/`: copy
 `examples/.env.example` into a scratch directory that's a git repo (with
 `.env` covered by `.gitignore`), and run the script there with `-f`.
 
+## Using with AI coding assistants
+
+Do not paste secrets into a chat with an assistant. Chat text is stored in transcripts, logs and sometimes training or sync systems, and cannot be taken back. Instead, let the assistant name the keys it needs and have it ask you to run this script in your own terminal. The values go straight from your keyboard to `.env`, and the assistant only sees the key names.
+
+Works with Claude Code, Codex, Cursor, Gemini CLI, Copilot and any other agent that reads `AGENTS.md`. Add this rule to your project's `AGENTS.md`:
+
+```md
+Never ask for or read secret values; ask the user to run dotenv-secret-prompt.
+```
+
+This repo's own `AGENTS.md` is a call contract for agents: what to run, what the exit codes mean, and what never to do. To also block agents from reading `.env` at all, pair this with [ai-coding-agent-guardrail-hooks](https://github.com/hyderhusainarastu/ai-coding-agent-guardrail-hooks).
+
+## Running under bash or on Linux
+
+The script is zsh only and will not run under `bash` or `sh`. On Linux, install zsh (`sudo apt install zsh`, `sudo dnf install zsh` or `sudo pacman -S zsh`); the script's `#!/bin/zsh` line may need to become `#!/usr/bin/env zsh` if zsh lives elsewhere. From bash you can still run it as a command: `zsh ./dotenv-secret-prompt.zsh`. Linux is untested here.
+
 ## What each safety check is for
 
 The script refuses to skip any of these, on purpose:
@@ -131,3 +147,12 @@ back to asking you to type key names directly.
   no-op even though the file still gets written.
 - Not tested outside macOS/Linux zsh; it should work under any reasonably
   current zsh with standard `git`, `grep`, `mktemp`, and `chmod` available.
+
+## Related
+
+- [ai-coding-agent-guardrail-hooks](https://github.com/hyderhusainarastu/ai-coding-agent-guardrail-hooks): hooks that stop coding agents from risky file and command actions.
+- [palimnote-tools](https://github.com/hyderhusainarastu/palimnote-tools): catalog of small developer tools.
+
+Keywords: dotenv, .env, secrets, api keys, hidden input, zsh, AGENTS.md, AI coding agents.
+
+Part of palimnote-tools - more at https://github.com/hyderhusainarastu
