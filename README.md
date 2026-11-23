@@ -114,7 +114,7 @@ The script refuses to skip any of these, on purpose:
    next `git add .` stages live credentials. This turns "did you remember to
    ignore it?" from a discipline problem into a hard stop.
 2. **Reads input with echo off** (`read -s`), never from a command-line
-   argument (arguments are rejected). Echo is hidden only when stdin is a
+   argument (the only argument is `-f`, a file path). Echo is hidden only when stdin is a
    terminal; piped stdin is read as-is. Terminal echo would put the secret
    on screen and in scrollback/screen-share; a command-line argument would
    put it in `~/.zsh_history` and in `ps` output for other users on the same
